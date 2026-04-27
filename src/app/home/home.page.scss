@@ -90,12 +90,12 @@ ion-card-subtitle {
 
 // تنسيق الأقسام (Segments)
 ion-segment {
-  background: #ffffff;
+  background: #000000;
   border-radius: 0;
   
   ion-segment-button {
     --indicator-color: var(--ion-color-primary);
-    --color: #030000;
+    --color: #ffffff;
     --color-checked: var(--ion-color-primary);
     font-weight: 500;
 
