@@ -1,0 +1,20 @@
+[
+  { "id": 1, "title": "تيشرت قطن أسود", "price": 250, "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500", "category": "ملابس" },
+  { "id": 2, "title": "قميص جينز صيفي", "price": 400, "image": "https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=500", "category": "ملابس" },
+  { "id": 3, "title": "حذاء رياضي نايك", "price": 1200, "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500", "category": "أحذية" },
+  { "id": 4, "title": "كوتشي أبيض كاجوال", "price": 600, "image": "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=500", "category": "أحذية" },
+  { "id": 5, "title": "ساعة ذكية Smart Watch", "price": 1500, "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500", "category": "إلكترونيات" },
+  { "id": 6, "title": "سماعات بلوتوث", "price": 800, "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500", "category": "إلكترونيات" },
+  { "id": 7, "title": "بنطلون جينز أزرق", "price": 450, "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500", "category": "ملابس" },
+  { "id": 8, "title": "سويت شيرت رمادي", "price": 550, "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500", "category": "ملابس" },
+  { "id": 9, "title": "جاكيت جينز عصري", "price": 700, "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500", "category": "ملابس" },
+  { "id": 10, "title": "تيشرت بولو أبيض", "price": 300, "image": "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=500", "category": "ملابس" },
+  { "id": 13, "title": "شورت صيفي كاجوال", "price": 200, "image": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=500", "category": "ملابس" },
+  { "id": 14, "title": "جاكيت نفخ شتوي", "price": 1200, "image": "https://images.unsplash.com/photo-1544923246-77307dd654cb?w=500", "category": "ملابس" },
+  { "id": 15, "title": "بلوفر صوف كحلي", "price": 500, "image": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500", "category": "ملابس" },
+  { "id": 16, "title": "كاب رياضي", "price": 150, "image": "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500", "category": "ملابس" },
+  { "id": 17, "title": "حذاء جلد كلاسيك", "price": 950, "image": "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=500", "category": "أحذية" },
+  { "id": 18, "title": "صندل صيفي مريح", "price": 300, "image": "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500", "category": "أحذية" },
+  { "id": 19, "title": "بوت شتوي جملي", "price": 1100, "image": "https://images.unsplash.com/photo-1605733513597-a8f8341084e6?w=500", "category": "أحذية" },
+  { "id": 20, "title": "كوتشي جري مريح", "price": 850, "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500", "category": "أحذية" }
+]

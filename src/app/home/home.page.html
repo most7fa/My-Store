@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-thumbnail class="logo-thumb">
+        <img src="assets/logo.png" alt="Icon Wear Logo" />
+      </ion-thumbnail>
+    </ion-buttons>
+    <ion-title class="title-rtl">Icon Wear</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar color="light">
+    <ion-segment 
+      [value]="selectedCategory" 
+      scrollable="true"
+      (ionChange)="loadData($any($event).detail.value)"
+    >
+      <ion-segment-button *ngFor="let cat of categories" [value]="cat">
+        <ion-label>{{ cat }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <ion-row>
+      <ion-col 
+        size="6" 
+        size-md="4" 
+        size-lg="3" 
+        *ngFor="let p of products; trackBy: trackItems"
+      >
+        <ion-card (click)="goToDetails(p)" button="true" class="clickable-card">
+
+          <div class="image-container">
+            <img 
+              [src]="p.image" 
+              [alt]="p.title || 'product image'" 
+            />
+          </div>
+
+          <ion-card-header>
+            <ion-card-subtitle>
+              {{ p.category }}
+            </ion-card-subtitle>
+            <ion-card-title class="product-title">
+              {{ p.title }}
+            </ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+             <p class="price">{{ p.price }} جنيه</p>
+          </ion-card-content>
+
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
