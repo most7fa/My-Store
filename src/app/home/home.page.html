@@ -12,16 +12,21 @@
     <ion-segment 
       [value]="selectedCategory" 
       scrollable="true"
-      (ionChange)="loadData($any($event).detail.value)"
+      (ionChange)="filterByCategory($event)"
     >
-      <ion-segment-button *ngFor="let cat of categories" [value]="cat">
-        <ion-label>{{ cat }}</ion-label>
+    <ion-segment-button value="الكل">
+      <ion-label>ALL</ion-label>
+    </ion-segment-button>
+
+      <ion-segment-button *ngFor="let cat of categories" [value]="cat.name">
+        <ion-label>{{ cat.name }}</ion-label>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <p style="color: white;">عدد المنتجات: {{ products.length }}</p>
   <ion-grid>
     <ion-row>
       <ion-col 
@@ -30,18 +35,17 @@
         size-lg="3" 
         *ngFor="let p of products; trackBy: trackItems"
       >
-        <ion-card (click)="goToDetails(p)" button="true" class="clickable-card">
+
+      <ion-card (click)="goToDetails(p)" button="true" class="clickable-card">
 
           <div class="image-container">
-            <img 
-              [src]="p.image" 
-              [alt]="p.title || 'product image'" 
-            />
+
+            <img [src]="p.images[0]" alt="{{ p.title }}">
           </div>
 
           <ion-card-header>
             <ion-card-subtitle>
-              {{ p.category }}
+              {{ p.category?.name }}
             </ion-card-subtitle>
             <ion-card-title class="product-title">
               {{ p.title }}
@@ -49,7 +53,7 @@
           </ion-card-header>
 
           <ion-card-content>
-             <p class="price">{{ p.price }} جنيه</p>
+             <p class="price">{{ p.price }} $</p>
           </ion-card-content>
 
         </ion-card>

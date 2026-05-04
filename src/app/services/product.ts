@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ProductService {
   // بنقول له مكان الملف فين
-  private url = 'assets/products.json';
+  private url = 'https://api.escuelajs.co/api/v1/products?offset=0&limit=10';
 
   constructor(private http: HttpClient) { }
 
