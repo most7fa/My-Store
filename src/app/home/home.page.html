@@ -5,59 +5,94 @@
         <img src="assets/logo.png" alt="Icon Wear Logo" />
       </ion-thumbnail>
     </ion-buttons>
-    <ion-title class="title-rtl">Icon Wear</ion-title>
+
+    <ion-title class="title-rtl">
+      Icon Wear
+    </ion-title>
   </ion-toolbar>
 
   <ion-toolbar color="light">
-    <ion-segment 
-      [value]="selectedCategory" 
-      scrollable="true"
-      (ionChange)="filterByCategory($event)"
-    >
-    <ion-segment-button value="الكل">
-      <ion-label>ALL</ion-label>
-    </ion-segment-button>
 
-      <ion-segment-button *ngFor="let cat of categories" [value]="cat.name">
-        <ion-label>{{ cat.name }}</ion-label>
+    <ion-segment
+      [value]="selectedCategory"
+      scrollable="true"
+      (ionChange)="filterByCategory($event)">
+
+      <ion-segment-button value="الكل">
+        <ion-label>ALL</ion-label>
       </ion-segment-button>
+
+      <ion-segment-button
+        *ngFor="let cat of categories"
+        [value]="cat.name">
+
+        <ion-label>
+          {{ cat.name }}
+        </ion-label>
+
+      </ion-segment-button>
+
     </ion-segment>
+
   </ion-toolbar>
+
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <p style="color: white;">عدد المنتجات: {{ products.length }}</p>
-  <ion-grid>
-    <ion-row>
-      <ion-col 
-        size="6" 
-        size-md="4" 
-        size-lg="3" 
-        *ngFor="let p of products; trackBy: trackItems"
-      >
 
-      <ion-card (click)="goToDetails(p)" button="true" class="clickable-card">
+  <p style="color:white;text-align:center;">
+    عدد المنتجات : {{ products.length }}
+  </p>
+
+  <ion-grid>
+
+    <ion-row>
+
+      <ion-col
+        size="6"
+        size-md="4"
+        size-lg="3"
+        *ngFor="let p of products; trackBy: trackItems">
+
+        <ion-card
+          button="true"
+          class="clickable-card"
+          (click)="goToDetails(p)">
 
           <div class="image-container">
 
-            <img [src]="p.images[0]" alt="{{ p.title }}">
+            <img
+              [src]="p.image"
+              [alt]="p.title">
+
           </div>
 
           <ion-card-header>
+
             <ion-card-subtitle>
-              {{ p.category?.name }}
+              {{ p.category }}
             </ion-card-subtitle>
+
             <ion-card-title class="product-title">
               {{ p.title }}
             </ion-card-title>
+
           </ion-card-header>
 
           <ion-card-content>
-             <p class="price">{{ p.price }} $</p>
+
+            <p class="price">
+              {{ p.price }} EGP
+            </p>
+
           </ion-card-content>
 
         </ion-card>
+
       </ion-col>
+
     </ion-row>
+
   </ion-grid>
+
 </ion-content>
