@@ -1,19 +1,75 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home" text="" color="dark"></ion-back-button>
     </ion-buttons>
-    <ion-title>تفاصيل المنتج</ion-title>
+    <ion-title color="dark">تفاصيل المنتج</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div *ngIf="product" style="text-align: center;">
-    <img [src]="product.image" style="max-height: 300px; width: 100%; object-fit: contain;" />
-    <h1 style="margin-top: 20px;">{{ product.title }}</h1>
-    <h3 color="success">{{ product.price }} جنيه</h3>
-    <p style="color: #666; margin: 20px 0;">هذا المنتج من أفضل الخامات المتاحة في قسم {{ product.category }} وهو متوفر حالياً بخصم خاص.</p>
+<ion-content>
+  <div *ngIf="product" class="product-container">
     
-    <ion-button expand="block" shape="round">إضافة إلى السلة</ion-button>
+    <!-- قسم الصورة الخلفية للمنتج -->
+    <div class="image-wrapper">
+      <img [src]="product.imageUrl || product.image" alt="{{ product.title || product.name }}" />
+    </div>
+
+    <!-- صندوق البيانات السفلي -->
+    <div class="details-box">
+      <div class="category-badge">{{ product.category }}</div>
+      
+      <h1 class="product-title">{{ product.title || product.name }}</h1>
+      
+      <div class="price-row">
+        <span class="product-price">{{ product.price }} ج.م</span>
+        <span class="stock-status">متوفر حالياً</span>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- 🌟 سلكتور اختيار الألوان الواقعي -->
+      <div class="selector-section">
+        <h3>اللون المفضل</h3>
+        <div class="colors-grid">
+          <div 
+            *ngFor="let color of availableColors" 
+            class="color-circle" 
+            [style.background-color]="color"
+            [class.active-color]="selectedColor === color"
+            (click)="selectColor(color)">
+            <ion-icon name="checkmark-outline" *ngIf="selectedColor === color"></ion-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🌟 سلكتور اختيار المقاسات الواقعي -->
+      <div class="selector-section" style="margin-top: 15px;">
+        <h3>المقاس</h3>
+        <div class="sizes-grid">
+          <div 
+            *ngFor="let size of availableSizes" 
+            class="size-box"
+            [class.active-size]="selectedSize === size"
+            (click)="selectSize(size)">
+            {{ size }}
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <h3>الوصف</h3>
+      <p class="product-description">
+        {{ product.description || 'هذا المنتج مصنع من أفضل الخامات المتاحة ومصمم بعناية ليناسب إطلالتك اليومية، متوفر الآن بخصم خاص لفترة محدودة.' }}
+      </p>
+
+      <!-- 🌟 زر الإضافة للسلة الاحترافي وموصل بالدالة الجديدة -->
+      <ion-button expand="block" shape="round" color="dark" class="add-to-cart-btn" (click)="addToCart()">
+        <ion-icon slot="start" name="bag-handle-outline"></ion-icon>
+        إضافة إلى السلة
+      </ion-button>
+    </div>
+
   </div>
 </ion-content>

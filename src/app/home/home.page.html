@@ -1,98 +1,120 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <!-- التولبار العلوي المودرن -->
+  <ion-toolbar color="dark">
     <ion-buttons slot="start">
-      <ion-thumbnail class="logo-thumb">
+      <ion-thumbnail class="logo-thumb" style="--border-radius: 4px; margin-left: 8px; width: 35px; height: 35px;">
         <img src="assets/logo.png" alt="Icon Wear Logo" />
       </ion-thumbnail>
     </ion-buttons>
-
-    <ion-title class="title-rtl">
-      Icon Wear
+    <ion-title class="title-rtl" style="font-weight: 800; font-size: 20px; letter-spacing: 0.5px;">
+      ICON WEAR
     </ion-title>
   </ion-toolbar>
 
-  <ion-toolbar color="light">
+  <!-- شريط البحث السريع والذكي -->
+  <ion-toolbar color="dark">
+    <ion-searchbar 
+      placeholder="ابحث عن منتجك المفضل..." 
+      animated="true"
+      debounce="300"
+      (ionInput)="onSearch($event)"
+      style="padding: 0 12px 8px 12px; --background: #1e293b; --color: white; --placeholder-color: #94a3b8; --icon-color: #94a3b8;">
+    </ion-searchbar>
+  </ion-toolbar>
 
+  <!-- فلاتر الأقسام التفاعلية -->
+  <ion-toolbar color="light">
     <ion-segment
       [value]="selectedCategory"
       scrollable="true"
-      (ionChange)="filterByCategory($event)">
-
-      <ion-segment-button value="الكل">
-        <ion-label>ALL</ion-label>
+      (ionChange)="filterByCategory($event)"
+      style="--background: transparent;">
+      
+      <ion-segment-button value="ALL">
+        <ion-label style="font-weight: 700;">ALL</ion-label>
       </ion-segment-button>
 
-      <ion-segment-button
-        *ngFor="let cat of categories"
-        [value]="cat.name">
-
-        <ion-label>
-          {{ cat.name }}
-        </ion-label>
-
+      <ion-segment-button value="MEN">
+        <ion-label style="font-weight: 700;">MEN</ion-label>
       </ion-segment-button>
 
+      <ion-segment-button value="WOMEN">
+        <ion-label style="font-weight: 700;">WOMEN</ion-label>
+      </ion-segment-button>
+
+      <ion-segment-button value="KIDS">
+        <ion-label style="font-weight: 700;">KIDS</ion-label>
+      </ion-segment-button>
     </ion-segment>
-
   </ion-toolbar>
-
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content style="--background: #f8fafc;">
+  
+  <!-- إحصائية صغيرة مريحة للعين -->
+  <div class="results-count" style="padding: 12px 16px 0 16px; font-size: 13px; color: #64748b; font-weight: 600;">
+    إجمالي المنتجات المتاحة: {{ filteredProducts.length }}
+  </div>
 
-  <p style="color:white;text-align:center;">
-    عدد المنتجات : {{ products.length }}
-  </p>
-
-  <ion-grid>
-
+  <!-- 1. تأثير الهيكل العظمي (Skeleton Screen) أثناء التحميل -->
+  <ion-grid *ngIf="isLoading">
     <ion-row>
+      <ion-col size="6" size-md="4" *ngFor="let n of [1,2,3,4]">
+        <ion-card style="background: white; border-radius: 12px; box-shadow: none; border: 1px solid #e2e8f0; padding: 8px;">
+          <ion-skeleton-text animated style="width: 100%; height: 140px; border-radius: 8px;"></ion-skeleton-text>
+          <ion-card-header style="padding: 10px 0 5px 0;">
+            <ion-skeleton-text animated style="width: 40%; height: 12px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 80%; height: 16px; margin-top: 6px;"></ion-skeleton-text>
+          </ion-card-header>
+          <ion-card-content style="padding: 0 0 5px 0;">
+            <ion-skeleton-text animated style="width: 30%; height: 14px;"></ion-skeleton-text>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
+  <!-- 2. عرض المنتجات الفعلي بعد اكتمال التحميل -->
+  <ion-grid *ngIf="!isLoading">
+    <ion-row>
       <ion-col
         size="6"
         size-md="4"
         size-lg="3"
-        *ngFor="let p of products; trackBy: trackItems">
+        *ngFor="let p of filteredProducts; trackBy: trackItems">
 
         <ion-card
           button="true"
-          class="clickable-card"
+          class="product-card-premium"
           (click)="goToDetails(p)">
 
           <div class="image-container">
-
-            <img
-              [src]="p.image"
-              [alt]="p.title">
-
+            <!-- 🌟 هنا تم التعديل لدعم المسارين المرفوعين من الداشبورد -->
+            <img [src]="p.imageUrl || p.image" [alt]="p.title || p.name">
           </div>
 
           <ion-card-header>
-
-            <ion-card-subtitle>
-              {{ p.category }}
-            </ion-card-subtitle>
-
+            <span class="badge-cat">{{ p.category }}</span>
             <ion-card-title class="product-title">
-              {{ p.title }}
+              {{ p.title || p.name }}
             </ion-card-title>
-
           </ion-card-header>
 
           <ion-card-content>
-
-            <p class="price">
-              {{ p.price }} EGP
-            </p>
-
+            <div class="price-row">
+              <span class="price-text">{{ p.price }} <small>EGP</small></span>
+            </div>
           </ion-card-content>
-
         </ion-card>
 
       </ion-col>
-
     </ion-row>
 
+    <!-- في حالة عدم وجود منتجات تطابق البحث أو الفلتر -->
+    <div *ngIf="filteredProducts.length === 0" class="empty-state">
+      <ion-icon name="bag-open-outline"></ion-icon>
+      <p>لا توجد منتجات متاحة حالياً في هذا القسم</p>
+    </div>
   </ion-grid>
 
 </ion-content>

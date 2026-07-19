@@ -1,107 +1,93 @@
-// الإعدادات العامة
-.logo-thumb {
-  width: 35px;
-  height: 35px;
-  margin: 0 10px;
-}
-
-.title-rtl {
-  text-align: right;
-  direction: rtl;
-}
-
-// تنسيق محتوى الصفحة والـ Grid
-ion-content {
-  --background: #f8f9fa; // لون خلفية مريح للعين
-}
-
-.container {
-  width: 100%;
-  padding: 10px;
-}
-
-// تنسيق الكارت (المنتج)
-ion-card {
-  height: 100%;
+// تصميم الكارت البريميوم للملابس
+.product-card-premium {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e2e8f0;
+  margin: 8px 0;
   display: flex;
   flex-direction: column;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  margin: 0; // الـ Grid هيتحكم في المسافات
-  border: 1px solid #eee;
-  transition: transform 0.2s ease;
-  background: #ffffff;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.02);
-  }
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
 
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
-}
 
-// حاوية الصورة - دي اللي بتظبط اللخبطة على التابلت
-.image-container {
-  width: 100%;
-  height: 180px; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  background: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
+  .image-container {
+    width: 100%;
+    height: 145px;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 
-  img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; // بيحافظ على أبعاد الصورة بدون مط
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // لقص الصورة بشكل ملائم بداخل المربع
+    }
   }
-}
 
-// نصوص الكارت
-ion-card-header {
-  padding: 10px;
-}
+  ion-card-header {
+    padding: 10px 12px 4px 12px;
+    
+    .badge-cat {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-ion-card-title {
-  font-size: 0.95rem;
-  font-weight: bold;
-  color: #333333; // خليته غامق عشان يبان، الأبيض مكنش بيظهر
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+    .product-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 4px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; // ثلاث نقاط لو الاسم طويل
+    }
+  }
 
-ion-card-subtitle {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--ion-color-primary);
-}
+  ion-card-content {
+    padding: 0 12px 12px 12px;
+    margin-top: auto;
 
-.price {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #2e7d32; // لون أخضر للسعر
-  margin: 10px;
-}
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
-// تنسيق الأقسام (Segments)
-ion-segment {
-  background: #000000;
-  border-radius: 0;
-  
-  ion-segment-button {
-    --indicator-color: var(--ion-color-primary);
-    --color: #ffffff;
-    --color-checked: var(--ion-color-primary);
-    font-weight: 500;
-
-    ion-label {
-      font-size: 0.85rem;
+      .price-text {
+        font-size: 15px;
+        font-weight: 800;
+        color: #22c55e;
+        
+        small {
+          font-size: 10px;
+          font-weight: 600;
+        }
+      }
     }
   }
 }
- 
+
+// واجهة الصفحة الفاضية
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #94a3b8;
+
+  ion-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+  p {
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
