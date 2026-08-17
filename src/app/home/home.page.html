@@ -2,16 +2,18 @@
   <!-- التولبار العلوي مع فليكس بوكس مظبوط للاتجاه العربي (اليمين) -->
   <ion-toolbar style="--background: #111827; color: #ffffff;">
     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 8px; direction: rtl;">
-      
+
       <!-- 🛒 الجزء اليمين: زرار السلة يظهر في الأول على اليمين -->
       <div style="margin-left: auto; margin-right: 4px;">
         <ion-button (click)="goToCart()" fill="clear" style="position: relative; overflow: visible; --padding-start: 0; --padding-end: 0;">
           <ion-icon name="bag-handle-outline" style="font-size: 28px; color: #ffffff;"></ion-icon>
           <!-- العداد الأحمر -->
-          <ion-badge color="danger" *ngIf="cartCount > 0" 
-            style="position: absolute; top: -5px; right: -5px; font-size: 10px; padding: 4px 6px; border-radius: 50%; font-weight: bold; z-index: 999;">
-            {{ cartCount }}
-          </ion-badge>
+          @if (cartCount > 0) {
+            <ion-badge color="danger"
+              style="position: absolute; top: -5px; right: -5px; font-size: 10px; padding: 4px 6px; border-radius: 50%; font-weight: bold; z-index: 999;">
+              {{ cartCount }}
+            </ion-badge>
+          }
         </ion-button>
       </div>
 
@@ -30,8 +32,8 @@
 
   <!-- شريط البحث السريع والذكي -->
   <ion-toolbar color="dark">
-    <ion-searchbar 
-      placeholder="ابحث عن منتجك المفضل..." 
+    <ion-searchbar
+      placeholder="ابحث عن منتجك المفضل..."
       animated="true"
       debounce="300"
       (ionInput)="onSearch($event)"
@@ -46,7 +48,7 @@
       scrollable="true"
       (ionChange)="filterByCategory($event)"
       style="--background: transparent;">
-      
+
       <ion-segment-button value="ALL">
         <ion-label style="font-weight: 700;">ALL</ion-label>
       </ion-segment-button>
@@ -67,70 +69,74 @@
 </ion-header>
 
 <ion-content style="--background: #f8fafc;">
-  
+
   <!-- إحصائية صغيرة مريحة للعين -->
   <div class="results-count" style="padding: 12px 16px 0 16px; font-size: 13px; color: #64748b; font-weight: 600;">
     إجمالي المنتجات المتاحة: {{ filteredProducts.length }}
   </div>
 
   <!-- 1. تأثير الهيكل العظمي (Skeleton Screen) أثناء التحميل -->
-  <ion-grid *ngIf="isLoading">
-    <ion-row>
-      <ion-col size="6" size-md="4" *ngFor="let n of [1,2,3,4]">
-        <ion-card style="background: white; border-radius: 12px; box-shadow: none; border: 1px solid #e2e8f0; padding: 8px;">
-          <ion-skeleton-text animated style="width: 100%; height: 140px; border-radius: 8px;"></ion-skeleton-text>
-          <ion-card-header style="padding: 10px 0 5px 0;">
-            <ion-skeleton-text animated style="width: 40%; height: 12px;"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 80%; height: 16px; margin-top: 6px;"></ion-skeleton-text>
-          </ion-card-header>
-          <ion-card-content style="padding: 0 0 5px 0;">
-            <ion-skeleton-text animated style="width: 30%; height: 14px;"></ion-skeleton-text>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  @if (isLoading) {
+    <ion-grid>
+      <ion-row>
+        @for (n of [1,2,3,4]; track n) {
+          <ion-col size="6" size-md="4">
+            <ion-card style="background: white; border-radius: 12px; box-shadow: none; border: 1px solid #e2e8f0; padding: 8px;">
+              <ion-skeleton-text animated style="width: 100%; height: 140px; border-radius: 8px;"></ion-skeleton-text>
+              <ion-card-header style="padding: 10px 0 5px 0;">
+                <ion-skeleton-text animated style="width: 40%; height: 12px;"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 80%; height: 16px; margin-top: 6px;"></ion-skeleton-text>
+              </ion-card-header>
+              <ion-card-content style="padding: 0 0 5px 0;">
+                <ion-skeleton-text animated style="width: 30%; height: 14px;"></ion-skeleton-text>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  }
 
   <!-- 2. عرض المنتجات الفعلي بعد اكتمال التحميل -->
-  <ion-grid *ngIf="!isLoading">
-    <ion-row>
-      <ion-col
-        size="6"
-        size-md="4"
-        size-lg="3"
-        *ngFor="let p of filteredProducts; trackBy: trackItems">
-
-        <ion-card
-          button="true"
-          class="product-card-premium"
-          (click)="goToDetails(p)">
-
-          <div class="image-container">
-            <img [src]="p.imageUrl || p.image" [alt]="p.title || p.name">
-          </div>
-
-          <ion-card-header>
-            <span class="badge-cat">{{ p.category }}</span>
-            <ion-card-title class="product-title">
-              {{ p.title || p.name }}
-            </ion-card-title>
-          </ion-card-header>
-
-          <ion-card-content>
-            <div class="price-row">
-              <span class="price-text">{{ p.price }} <small>EGP</small></span>
-            </div>
-          </ion-card-content>
-        </ion-card>
-
-      </ion-col>
-    </ion-row>
-
-    <!-- في حالة عدم وجود منتجات تطابق البحث أو الفلتر -->
-    <div *ngIf="filteredProducts.length === 0" class="empty-state">
-      <ion-icon name="bag-outline"></ion-icon>
-      <p>لا توجد منتجات متاحة حالياً في هذا القسم</p>
-    </div>
-  </ion-grid>
+  @if (!isLoading) {
+    <ion-grid>
+      <ion-row>
+        @for (p of filteredProducts; track trackItems($index, p)) {
+          <ion-col
+            size="6"
+            size-md="4"
+            size-lg="3"
+            >
+            <ion-card
+              button="true"
+              class="product-card-premium"
+              (click)="goToDetails(p)">
+              <div class="image-container">
+                <img [src]="p.imageUrl || p.image" [alt]="p.title || p.name">
+              </div>
+              <ion-card-header>
+                <span class="badge-cat">{{ p.category }}</span>
+                <ion-card-title class="product-title">
+                  {{ p.title || p.name }}
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="price-row">
+                  <span class="price-text">{{ p.price }} <small>EGP</small></span>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
+      <!-- في حالة عدم وجود منتجات تطابق البحث أو الفلتر -->
+      @if (filteredProducts.length === 0) {
+        <div class="empty-state">
+          <ion-icon name="bag-outline"></ion-icon>
+          <p>لا توجد منتجات متاحة حالياً في هذا القسم</p>
+        </div>
+      }
+    </ion-grid>
+  }
 
 </ion-content>

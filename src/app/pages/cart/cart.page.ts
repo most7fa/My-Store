@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule, ToastController, AlertController, NavController } from '@ionic/angular'; // 🌟 ضفنا NavController للرجوع لو احتاجته
 import { CartService, CartItem } from '../../services/cart.service';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
@@ -10,7 +10,7 @@ import { trashOutline, addOutline, removeOutline, bagOutline, arrowBackOutline }
     selector: 'app-cart',
     templateUrl: './cart.page.html',
     styleUrls: ['./cart.page.scss'],
-    imports: [IonicModule, CommonModule]
+    imports: [IonicModule]
 })
 export class CartPage implements OnInit {
 

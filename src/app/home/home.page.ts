@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonicModule, NavController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../services/product'; // السيرفيس الاحترافية للمنتجات
@@ -12,10 +12,9 @@ import { bagHandleOutline, bagOutline, cartOutline } from 'ionicons/icons'; // �
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
     imports: [
-        IonicModule,
-        CommonModule,
-        FormsModule
-    ]
+    IonicModule,
+    FormsModule
+]
 })
 export class HomePage implements OnInit {
 
