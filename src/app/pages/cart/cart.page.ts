@@ -7,11 +7,10 @@ import { addIcons } from 'ionicons'; // 🌟 استيراد دالة تسجيل 
 import { trashOutline, addOutline, removeOutline, bagOutline, arrowBackOutline } from 'ionicons/icons'; // 🌟 استيراد الأيقونات المستخدمة في الـ HTML
 
 @Component({
-  selector: 'app-cart',
-  templateUrl: './cart.page.html',
-  styleUrls: ['./cart.page.scss'],
-  standalone: true,
-  imports: [IonicModule, CommonModule]
+    selector: 'app-cart',
+    templateUrl: './cart.page.html',
+    styleUrls: ['./cart.page.scss'],
+    imports: [IonicModule, CommonModule]
 })
 export class CartPage implements OnInit {
 

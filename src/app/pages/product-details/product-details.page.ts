@@ -8,11 +8,10 @@ import { addIcons } from 'ionicons'; // 🌟 استيراد دالة تسجيل 
 import { cartOutline, arrowBackOutline, checkmarkOutline } from 'ionicons/icons'; // 🌟 استيراد الأيقونات اللي هتحتاجها في الـ HTML
 
 @Component({
-  selector: 'app-product-details',
-  templateUrl: './product-details.page.html',
-  styleUrls: ['./product-details.page.scss'],
-  standalone: true,
-  imports: [IonicModule, CommonModule]
+    selector: 'app-product-details',
+    templateUrl: './product-details.page.html',
+    styleUrls: ['./product-details.page.scss'],
+    imports: [IonicModule, CommonModule]
 })
 export class ProductDetailsPage implements OnInit {
 

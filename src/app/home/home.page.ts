@@ -8,15 +8,14 @@ import { addIcons } from 'ionicons'; // 🌟 استيراد دالة تسجيل 
 import { bagHandleOutline, bagOutline, cartOutline } from 'ionicons/icons'; // 🌟 الاستيراد الصريح للأيقونات المستخدمة
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
-  standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule
-  ]
+    selector: 'app-home',
+    templateUrl: 'home.page.html',
+    styleUrls: ['home.page.scss'],
+    imports: [
+        IonicModule,
+        CommonModule,
+        FormsModule
+    ]
 })
 export class HomePage implements OnInit {
 
