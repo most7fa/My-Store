@@ -1,72 +1,81 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="light">
+  <!-- الـ Header غامق ومتناسق مع هوية ICON WEAR الفخمة -->
+  <ion-toolbar style="--background: #111827; color: #ffffff;">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text="" color="dark"></ion-back-button>
+      <!-- زرار الرجوع الافتراضي بلون أبيض ليتماشى مع الخلفية الغامقة -->
+      <ion-back-button defaultHref="/home" text="" style="--color: #ffffff;"></ion-back-button>
     </ion-buttons>
-    <ion-title color="dark">تفاصيل المنتج</ion-title>
+    <ion-title style="color: #ffffff; font-weight: 700;">تفاصيل المنتج</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content style="--background: #f8fafc;">
   <div *ngIf="product" class="product-container">
     
     <!-- قسم الصورة الخلفية للمنتج -->
-    <div class="image-wrapper">
-      <img [src]="product.imageUrl || product.image" alt="{{ product.title || product.name }}" />
+    <div class="image-wrapper" style="width: 100%; height: 350px; background: white; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+      <img [src]="product.imageUrl || product.image" alt="{{ product.title || product.name }}" style="width: 100%; height: 100%; object-fit: cover;" />
     </div>
 
     <!-- صندوق البيانات السفلي -->
-    <div class="details-box">
-      <div class="category-badge">{{ product.category }}</div>
+    <div class="details-box" style="padding: 20px; background: white; border-radius: 24px 24px 0 0; margin-top: -20px; position: relative; box-shadow: 0 -4px 10px rgba(0,0,0,0.05);">
+      <div class="category-badge" style="display: inline-block; background: #f1f5f9; color: #475569; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">
+        {{ product.category }}
+      </div>
       
-      <h1 class="product-title">{{ product.title || product.name }}</h1>
+      <h1 class="product-title" style="font-size: 22px; font-weight: 800; color: #1e293b; margin: 12px 0 8px 0;">
+        {{ product.title || product.name }}
+      </h1>
       
-      <div class="price-row">
-        <span class="product-price">{{ product.price }} ج.م</span>
-        <span class="stock-status">متوفر حالياً</span>
+      <div class="price-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <span class="product-price" style="font-size: 20px; font-weight: 800; color: #10b981;">{{ product.price }} ج.م</span>
+        <span class="stock-status" style="font-size: 13px; color: #16a34a; font-weight: 600;">متوفر حالياً</span>
       </div>
 
-      <hr class="divider" />
+      <hr class="divider" style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;" />
 
       <!-- 🌟 سلكتور اختيار الألوان الواقعي -->
       <div class="selector-section">
-        <h3>اللون المفضل</h3>
-        <div class="colors-grid">
+        <h3 style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 10px;">اللون المفضل</h3>
+        <div class="colors-grid" style="display: flex; gap: 12px; align-items: center;">
           <div 
             *ngFor="let color of availableColors" 
             class="color-circle" 
             [style.background-color]="color"
             [class.active-color]="selectedColor === color"
-            (click)="selectColor(color)">
-            <ion-icon name="checkmark-outline" *ngIf="selectedColor === color"></ion-icon>
+            (click)="selectColor(color)"
+            style="width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; transition: all 0.2s ease;">
+            <!-- أيقونة الصح بتظهر لما اللون يتحدد ولونها يقلب أبيض أو أسود حسب الخلفية -->
+            <ion-icon name="checkmark-outline" *ngIf="selectedColor === color" style="color: #ffffff; font-size: 18px; font-weight: bold;"></ion-icon>
           </div>
         </div>
       </div>
 
       <!-- 🌟 سلكتور اختيار المقاسات الواقعي -->
-      <div class="selector-section" style="margin-top: 15px;">
-        <h3>المقاس</h3>
-        <div class="sizes-grid">
+      <div class="selector-section" style="margin-top: 20px;">
+        <h3 style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 10px;">المقاس</h3>
+        <div class="sizes-grid" style="display: flex; gap: 10px;">
           <div 
             *ngFor="let size of availableSizes" 
             class="size-box"
             [class.active-size]="selectedSize === size"
-            (click)="selectSize(size)">
+            (click)="selectSize(size)"
+            style="min-width: 45px; height: 45px; border: 1px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.2s ease;">
             {{ size }}
           </div>
         </div>
       </div>
 
-      <hr class="divider" />
+      <hr class="divider" style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
 
-      <h3>الوصف</h3>
-      <p class="product-description">
+      <h3 style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">الوصف</h3>
+      <p class="product-description" style="color: #64748b; line-height: 1.6; font-size: 14px; margin-bottom: 30px;">
         {{ product.description || 'هذا المنتج مصنع من أفضل الخامات المتاحة ومصمم بعناية ليناسب إطلالتك اليومية، متوفر الآن بخصم خاص لفترة محدودة.' }}
       </p>
 
       <!-- 🌟 زر الإضافة للسلة الاحترافي وموصل بالدالة الجديدة -->
-      <ion-button expand="block" shape="round" color="dark" class="add-to-cart-btn" (click)="addToCart()">
-        <ion-icon slot="start" name="bag-handle-outline"></ion-icon>
+      <ion-button (click)="addToCart()" expand="block" shape="round" style="--background: #111827; height: 50px; font-weight: 700; font-size: 16px; margin-top: 10px;">
+        <ion-icon slot="start" name="bag-handle-outline" style="font-size: 20px; margin-inline-end: 8px;"></ion-icon>
         إضافة إلى السلة
       </ion-button>
     </div>

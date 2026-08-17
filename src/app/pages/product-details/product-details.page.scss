@@ -153,6 +153,19 @@
     }
   }
 
+  // تأثير تحديد اللون (Border أسود فخم حول الدائرة النشطة)
+.color-circle.active-color {
+  border-color: #111827 !important;
+  transform: scale(1.1);
+}
+
+// تأثير تحديد المقاس (خلفية سوداء وخط أبيض للمقاس النشط)
+.size-box.active-size {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+  border-color: #111827 !important;
+}
+
   // شكل الدائرة النشطة المحددة
   .active-color {
     transform: scale(1.15);

@@ -1,9 +1,11 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ToastController } from '@ionic/angular';
+import { IonicModule, ToastController, NavController } from '@ionic/angular'; // 🌟 ضفنا NavController عشان دالة الرجوع
 import { ActivatedRoute } from '@angular/router';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { CartService } from '../../services/cart.service'; // 🌟 استيراد سيرفس السلة
+import { CartService } from '../../services/cart.service'; 
+import { addIcons } from 'ionicons'; // 🌟 استيراد دالة تسجيل الأيقونات
+import { cartOutline, arrowBackOutline, checkmarkOutline } from 'ionicons/icons'; // 🌟 استيراد الأيقونات اللي هتحتاجها في الـ HTML
 
 @Component({
   selector: 'app-product-details',
@@ -16,8 +18,9 @@ export class ProductDetailsPage implements OnInit {
 
   private route = inject(ActivatedRoute);
   private firestore = inject(Firestore);
-  private cartService = inject(CartService); // 🌟 حقن السيرفس
+  private cartService = inject(CartService); 
   private toastCtrl = inject(ToastController);
+  private navCtrl = inject(NavController); // 🌟 حقن الـ NavController للرجوع للخلف
   private cdr = inject(ChangeDetectorRef);
 
   product: any = null;
@@ -29,6 +32,11 @@ export class ProductDetailsPage implements OnInit {
   // 🌟 المتغيرات اللي هتخزن اختيار الزبون (بشكل افتراضي واقفين على أول اختيار)
   selectedSize: string = 'M';
   selectedColor: string = '#0f172a';
+
+  constructor() {
+    // 🌟 تسجيل الأيقونات هنا عشان تظهر جوه الـ HTML وم تضربش
+    addIcons({ cartOutline, arrowBackOutline, checkmarkOutline });
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -61,11 +69,16 @@ export class ProductDetailsPage implements OnInit {
     this.selectedColor = color;
   }
 
+  // 🌟 دالة الرجوع للصفحة السابقة
+  goBack() {
+    this.navCtrl.back();
+  }
+
   // 🌟 الدالة الاحترافية اللي بتشتغل لما يدوس "إضافة إلى السلة"
   async addToCart() {
     if (!this.product) return;
 
-    // بنبعت المنتج مع المقاص واللون المختارين للسيرفس
+    // بنبعت المنتج مع المقاس واللون المختارين للسيرفس
     this.cartService.addToCart(this.product, this.selectedSize, this.selectedColor);
 
     // بنظهر رسالة توست سريعة وشيك للزبون تأكد الإضافة

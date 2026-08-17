@@ -1,14 +1,31 @@
 <ion-header class="ion-no-border">
-  <!-- التولبار العلوي المودرن -->
-  <ion-toolbar color="dark">
-    <ion-buttons slot="start">
-      <ion-thumbnail class="logo-thumb" style="--border-radius: 4px; margin-left: 8px; width: 35px; height: 35px;">
-        <img src="assets/logo.png" alt="Icon Wear Logo" />
-      </ion-thumbnail>
-    </ion-buttons>
-    <ion-title class="title-rtl" style="font-weight: 800; font-size: 20px; letter-spacing: 0.5px;">
-      ICON WEAR
-    </ion-title>
+  <!-- التولبار العلوي مع فليكس بوكس مظبوط للاتجاه العربي (اليمين) -->
+  <ion-toolbar style="--background: #111827; color: #ffffff;">
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 8px; direction: rtl;">
+      
+      <!-- 🛒 الجزء اليمين: زرار السلة يظهر في الأول على اليمين -->
+      <div style="margin-left: auto; margin-right: 4px;">
+        <ion-button (click)="goToCart()" fill="clear" style="position: relative; overflow: visible; --padding-start: 0; --padding-end: 0;">
+          <ion-icon name="bag-handle-outline" style="font-size: 28px; color: #ffffff;"></ion-icon>
+          <!-- العداد الأحمر -->
+          <ion-badge color="danger" *ngIf="cartCount > 0" 
+            style="position: absolute; top: -5px; right: -5px; font-size: 10px; padding: 4px 6px; border-radius: 50%; font-weight: bold; z-index: 999;">
+            {{ cartCount }}
+          </ion-badge>
+        </ion-button>
+      </div>
+
+      <!-- الجزء الشمال: اللوجو والعنوان يروحوا يسار -->
+      <div style="display: flex; align-items: center; margin-right: auto;">
+        <ion-title class="title-rtl" style="font-weight: 800; font-size: 20px; letter-spacing: 0.5px; color: #ffffff; padding: 0 8px 0 0;">
+          ICON WEAR
+        </ion-title>
+        <ion-thumbnail class="logo-thumb" style="--border-radius: 4px; width: 35px; height: 35px; margin-right: 4px;">
+          <img src="assets/logo.png" alt="Icon Wear Logo" />
+        </ion-thumbnail>
+      </div>
+
+    </div>
   </ion-toolbar>
 
   <!-- شريط البحث السريع والذكي -->
@@ -89,7 +106,6 @@
           (click)="goToDetails(p)">
 
           <div class="image-container">
-            <!-- 🌟 هنا تم التعديل لدعم المسارين المرفوعين من الداشبورد -->
             <img [src]="p.imageUrl || p.image" [alt]="p.title || p.name">
           </div>
 
@@ -112,7 +128,7 @@
 
     <!-- في حالة عدم وجود منتجات تطابق البحث أو الفلتر -->
     <div *ngIf="filteredProducts.length === 0" class="empty-state">
-      <ion-icon name="bag-open-outline"></ion-icon>
+      <ion-icon name="bag-outline"></ion-icon>
       <p>لا توجد منتجات متاحة حالياً في هذا القسم</p>
     </div>
   </ion-grid>

@@ -2,7 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, NavController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { ProductService } from '../services/product'; // 🌟 السيرفيس الاحترافية اللي عملناها
+import { ProductService } from '../services/product'; // السيرفيس الاحترافية للمنتجات
+import { CartService } from '../services/cart.service'; // استيراد سيرفس السلة الجديدة
+import { addIcons } from 'ionicons'; // 🌟 استيراد دالة تسجيل الأيقونات
+import { bagHandleOutline, bagOutline, cartOutline } from 'ionicons/icons'; // 🌟 الاستيراد الصريح للأيقونات المستخدمة
 
 @Component({
   selector: 'app-home',
@@ -18,7 +21,8 @@ import { ProductService } from '../services/product'; // 🌟 السيرفيس �
 export class HomePage implements OnInit {
 
   private navCtrl = inject(NavController);
-  private productService = inject(ProductService); // حقن السيرفيس بدلاً من الفايرستور مباشرة هنا لعزل الكود
+  private productService = inject(ProductService);
+  private cartService = inject(CartService); // حقن سيرفس السلة
 
   allProducts: any[] = [];      // 📦 الخزان الرئيسي الثابت لكل منتجات الفايربيز
   filteredProducts: any[] = []; // 🔍 القائمة المرنة اللي بتتعرض في الـ HTML بعد البحث والفلترة
@@ -26,9 +30,16 @@ export class HomePage implements OnInit {
   selectedCategory: string = 'ALL'; // القسم النشط حالياً
   searchTerm: string = '';          // كلمة البحث الحالية
   isLoading: boolean = true;        // ⏳ مؤشر التحميل عشان كروت الـ Skeleton الشيك تشتغل
+  cartCount: number = 0;            // 🛒 عداد السلة اللي هيظهر فوق الأيقونة
+
+  constructor() {
+    // 🌟 تسجيل الأيقونات صراحةً هنا لضمان ظهورها في نظام الـ Standalone
+    addIcons({ bagHandleOutline, bagOutline, cartOutline });
+  }
 
   ngOnInit() {
     this.loadProductsLive();
+    this.listenToCartCount(); // ابدأ مراقبة عداد السلة فوراً
   }
 
   /**
@@ -45,6 +56,15 @@ export class HomePage implements OnInit {
         console.error('خطأ في جلب منتجات ICON WEAR:', err);
         this.isLoading = false;
       }
+    });
+  }
+
+  /**
+   * 🌟 الاشتراك في عداد السلة لتحديث الأيقونة لايف وبدون ريفريش
+   */
+  listenToCartCount() {
+    this.cartService.cartCount$.subscribe((count: number) => {
+      this.cartCount = count;
     });
   }
 
@@ -96,6 +116,13 @@ export class HomePage implements OnInit {
    */
   goToDetails(product: any) {
     this.navCtrl.navigateForward(`/product-details/${product.id}`);
+  }
+
+  /**
+   * 🛒 ✈️ الانتقال لصفحة سلة المشتريات
+   */
+  goToCart() {
+    this.navCtrl.navigateForward('/cart');
   }
 
   /**
