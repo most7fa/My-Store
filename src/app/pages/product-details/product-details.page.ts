@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { IonicModule, ToastController, NavController } from '@ionic/angular'; // 🌟 ضفنا NavController عشان دالة الرجوع
 import { ActivatedRoute } from '@angular/router';
@@ -11,6 +11,7 @@ import { cartOutline, arrowBackOutline, checkmarkOutline } from 'ionicons/icons'
     selector: 'app-product-details',
     templateUrl: './product-details.page.html',
     styleUrls: ['./product-details.page.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [IonicModule]
 })
 export class ProductDetailsPage implements OnInit {

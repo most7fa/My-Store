@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { IonicModule, NavController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { bagHandleOutline, bagOutline, cartOutline } from 'ionicons/icons'; // ð
     selector: 'app-home',
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
     IonicModule,
     FormsModule

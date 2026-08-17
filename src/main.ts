@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
@@ -29,7 +29,7 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules)
     ),
 
-    provideHttpClient(),
+    provideHttpClient(withXhr()),
 
     provideFirebaseApp(() =>
       initializeApp(environment.firebaseConfig)

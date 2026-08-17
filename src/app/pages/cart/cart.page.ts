@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { IonicModule, ToastController, AlertController, NavController } from '@ionic/angular'; // 🌟 ضفنا NavController للرجوع لو احتاجته
 import { CartService, CartItem } from '../../services/cart.service';
@@ -10,6 +10,7 @@ import { trashOutline, addOutline, removeOutline, bagOutline, arrowBackOutline }
     selector: 'app-cart',
     templateUrl: './cart.page.html',
     styleUrls: ['./cart.page.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [IonicModule]
 })
 export class CartPage implements OnInit {
