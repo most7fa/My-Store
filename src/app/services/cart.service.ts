@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-// تعريف شكل المنتج جوه السلة بالكمية والمقاس واللون المختارين
 export interface CartItem {
   id: string;
+  productId: string;
   title: string;
   price: number;
+  originalPrice?: number;
   image: string;
   category: string;
   quantity: number;
-  selectedSize?: string;
-  selectedColor?: string;
+  selectedSize: string;
+  selectedColor: string;
 }
 
 @Injectable({
@@ -18,36 +19,46 @@ export interface CartItem {
 })
 export class CartService {
   private cartItems: CartItem[] = [];
-  
-  //BehaviorSubject عشان نبعت تحديثات لايف لعدد المنتجات فوق في الـ Header في أي صفحة
-  private cartCount = new BehaviorSubject<number>(0);
-  cartCount$ = this.cartCount.asObservable();
+
+  private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
+  cartItems$: Observable<CartItem[]> = this.cartItemsSubject.asObservable();
+
+  private cartCountSubject = new BehaviorSubject<number>(0);
+  cartCount$: Observable<number> = this.cartCountSubject.asObservable();
+
+  private totalPriceSubject = new BehaviorSubject<number>(0);
+  totalPrice$: Observable<number> = this.totalPriceSubject.asObservable();
 
   constructor() {
-    this.loadCart(); // أول ما الأبلكيشن يفتح، يسحب السلة المحفوظة في الموبايل
+    this.loadCart();
   }
 
-  // جلب كل عناصر السلة حالياً
-  getCartItems() {
-    return this.cartItems;
+  getCartItems(): CartItem[] {
+    return [...this.cartItems];
   }
 
-  // إضافة منتج للسلة (مع ذكاء تجميع الكمية لو ضاف نفس المنتج بنفس المقاس واللون)
-  addToCart(product: any, size: string = 'M', color: string = 'Default') {
-    const itemId = `${product.id}_${size}_${color}`; // معرف فريد يدمج المنتج بمواصفاته
-    
-    const existingItem = this.cartItems.find(item => item.id === itemId);
+  addToCart(product: any, size: string = 'M', color: string = 'Default', quantity: number = 1) {
+    const productId = product.id || product.productId || 'p_unknown';
+    const itemId = `${productId}_${size}_${color}`;
 
-    if (existingItem) {
-      existingItem.quantity += 1;
+    const existingIndex = this.cartItems.findIndex(item => item.id === itemId);
+
+    if (existingIndex > -1) {
+      this.cartItems[existingIndex].quantity += quantity;
     } else {
+      const price = product.price || 0;
+      const discount = product.discountPercent || 0;
+      const finalPrice = discount > 0 ? price - (price * (discount / 100)) : price;
+
       this.cartItems.push({
         id: itemId,
-        title: product.title || product.name,
-        price: product.price,
-        image: product.imageUrl || product.image,
-        category: product.category,
-        quantity: 1,
+        productId: productId,
+        title: product.title || product.name || 'Product',
+        price: finalPrice,
+        originalPrice: discount > 0 ? price : undefined,
+        image: product.imageUrl || product.image || (product.images && product.images[0]) || 'assets/logo.png',
+        category: product.category || 'PRODUCT',
+        quantity: quantity,
         selectedSize: size,
         selectedColor: color
       });
@@ -56,21 +67,19 @@ export class CartService {
     this.saveCart();
   }
 
-  // زيادة الكمية بمقدار 1
   increaseQuantity(itemId: string) {
-    const item = this.cartItems.find(item => item.id === itemId);
+    const item = this.cartItems.find(i => i.id === itemId);
     if (item) {
       item.quantity += 1;
       this.saveCart();
     }
   }
 
-  // تقليل الكمية بمقدار 1 (ولو وصلت لـ 0 يتمسح تلقائياً)
   decreaseQuantity(itemId: string) {
-    const item = this.cartItems.find(item => item.id === itemId);
+    const item = this.cartItems.find(i => i.id === itemId);
     if (item) {
       item.quantity -= 1;
-      if (item.quantity === 0) {
+      if (item.quantity <= 0) {
         this.removeFromCart(itemId);
       } else {
         this.saveCart();
@@ -78,38 +87,40 @@ export class CartService {
     }
   }
 
-  // حذف منتج تماماً من السلة
   removeFromCart(itemId: string) {
     this.cartItems = this.cartItems.filter(item => item.id !== itemId);
     this.saveCart();
   }
 
-  // حساب إجمالي الحساب المالي للسلة بالكامل
   getTotalPrice(): number {
     return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   }
 
-  // تفريغ السلة بالكامل بعد تأكيد الأوردر
   clearCart() {
     this.cartItems = [];
     this.saveCart();
   }
 
-  // دالة الحفظ في ذاكرة التخزين المحلية للموبايل
   private saveCart() {
     localStorage.setItem('icon_wear_cart', JSON.stringify(this.cartItems));
-    // تحديث العداد لايف في الـ Header
+    
     const count = this.cartItems.reduce((total, item) => total + item.quantity, 0);
-    this.cartCount.next(count);
+    const total = this.getTotalPrice();
+
+    this.cartItemsSubject.next([...this.cartItems]);
+    this.cartCountSubject.next(count);
+    this.totalPriceSubject.next(total);
   }
 
-  // دالة القراءة من ذاكرة الموبايل
   private loadCart() {
     const savedCart = localStorage.getItem('icon_wear_cart');
     if (savedCart) {
-      this.cartItems = JSON.parse(savedCart);
-      const count = this.cartItems.reduce((total, item) => total + item.quantity, 0);
-      this.cartCount.next(count);
+      try {
+        this.cartItems = JSON.parse(savedCart);
+      } catch (e) {
+        this.cartItems = [];
+      }
     }
+    this.saveCart();
   }
 }

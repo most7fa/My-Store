@@ -1,133 +1,224 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject
+} from '@angular/core';
+
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { IonicModule, NavController } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
-import { ProductService } from '../services/product'; // السيرفيس الاحترافية للمنتجات
-import { CartService } from '../services/cart.service'; // استيراد سيرفس السلة الجديدة
-import { addIcons } from 'ionicons'; // 🌟 استيراد دالة تسجيل الأيقونات
-import { bagHandleOutline, bagOutline, cartOutline } from 'ionicons/icons'; // 🌟 الاستيراد الصريح للأيقونات المستخدمة
+
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { BadgeModule } from 'primeng/badge';
+import { SkeletonModule } from 'primeng/skeleton';
+import { SelectButtonModule } from 'primeng/selectbutton';
+
+import { ProductService, Product } from '../services/product';
+import { CartService } from '../services/cart.service';
+import { WishlistService } from '../services/wishlist.service';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: 'home.page.html',
-    styleUrls: ['home.page.scss'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [
+  selector: 'app-home',
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [
+    CommonModule,
+    FormsModule,
     IonicModule,
-    FormsModule
-]
+
+    ButtonModule,
+    InputTextModule,
+    BadgeModule,
+    SkeletonModule,
+    SelectButtonModule
+  ]
 })
 export class HomePage implements OnInit {
 
   private navCtrl = inject(NavController);
   private productService = inject(ProductService);
-  private cartService = inject(CartService); // حقن سيرفس السلة
+  private cartService = inject(CartService);
+  public wishlistService = inject(WishlistService);
+  private document = inject(DOCUMENT);
 
-  allProducts: any[] = [];      // 📦 الخزان الرئيسي الثابت لكل منتجات الفايربيز
-  filteredProducts: any[] = []; // 🔍 القائمة المرنة اللي بتتعرض في الـ HTML بعد البحث والفلترة
+  allProducts: Product[] = [];
+  filteredProducts: Product[] = [];
 
-  selectedCategory: string = 'ALL'; // القسم النشط حالياً
-  searchTerm: string = '';          // كلمة البحث الحالية
-  isLoading: boolean = true;        // ⏳ مؤشر التحميل عشان كروت الـ Skeleton الشيك تشتغل
-  cartCount: number = 0;            // 🛒 عداد السلة اللي هيظهر فوق الأيقونة
+  featuredProducts: Product[] = [];
+  newProducts: Product[] = [];
 
-  constructor() {
-    // 🌟 تسجيل الأيقونات صراحةً هنا لضمان ظهورها في نظام الـ Standalone
-    addIcons({ bagHandleOutline, bagOutline, cartOutline });
+  selectedCategory = 'ALL';
+  searchTerm = '';
+
+  isLoading = true;
+  cartCount = 0;
+  wishlistCount = 0;
+
+  categories = [
+    { label: 'All', value: 'ALL', icon: 'pi pi-th-large' },
+    { label: 'Men', value: 'MEN', icon: 'pi pi-user' },
+    { label: 'Women', value: 'WOMEN', icon: 'pi pi-heart' },
+    { label: 'Kids', value: 'KIDS', icon: 'pi pi-star' }
+  ];
+
+  categoryButtons = [
+    { name: 'Men', value: 'MEN', icon: 'pi pi-user', description: 'Modern styles' },
+    { name: 'Women', value: 'WOMEN', icon: 'pi pi-heart', description: 'New collection' },
+    { name: 'Kids', value: 'KIDS', icon: 'pi pi-star', description: 'Cute & comfy' },
+    { name: 'All Products', value: 'ALL', icon: 'pi pi-th-large', description: 'Explore everything' }
+  ];
+
+  ngOnInit(): void {
+    this.loadProducts();
+    this.listenToCartCount();
+    this.listenToWishlistCount();
   }
 
-  ngOnInit() {
-    this.loadProductsLive();
-    this.listenToCartCount(); // ابدأ مراقبة عداد السلة فوراً
+  scrollToSearch(): void {
+    this.document.querySelector('.search-section')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
 
-  /**
-   * 🔥 جلب المنتجات لايف (Real-time) من الفايربيز عن طريق السيرفيس
-   */
-  loadProductsLive() {
+  private loadProducts(): void {
+    this.isLoading = true;
+
     this.productService.getProducts().subscribe({
-      next: (data: any) => {
-        this.allProducts = data;
-        this.applyFilters();    // شغل الفلاتر فوراً أول ما البيانات توصل
-        this.isLoading = false; // اقفل كروت التحميل الرمادية واعرض الشغل الحقيقي
+      next: (products) => {
+        this.allProducts = products ?? [];
+        this.featuredProducts = this.allProducts.slice(0, 4);
+        this.newProducts = [...this.allProducts].reverse().slice(0, 4);
+        this.applyFilters();
+        this.isLoading = false;
       },
-      error: (err) => {
-        console.error('خطأ في جلب منتجات ICON WEAR:', err);
+      error: (error) => {
+        console.error('Error loading products:', error);
+        this.allProducts = [];
+        this.filteredProducts = [];
         this.isLoading = false;
       }
     });
   }
 
-  /**
-   * 🌟 الاشتراك في عداد السلة لتحديث الأيقونة لايف وبدون ريفريش
-   */
-  listenToCartCount() {
-    this.cartService.cartCount$.subscribe((count: number) => {
+  private listenToCartCount(): void {
+    this.cartService.cartCount$.subscribe((count) => {
       this.cartCount = count;
     });
   }
 
-  /**
-   * 🧠 دالة الفلترة الذكية الموحدة (بتدمج فلاتر الأقسام مع شريط البحث)
-   */
-  applyFilters() {
-    let tempProducts = [...this.allProducts];
+  private listenToWishlistCount(): void {
+    this.wishlistService.wishlistCount$.subscribe((count) => {
+      this.wishlistCount = count;
+    });
+  }
 
-    // 1️⃣ أولاً: الفلترة حسب القسم (MEN - WOMEN - KIDS)
+  addToCart(product: Product, event: Event): void {
+    event.stopPropagation();
+    this.cartService.addToCart(product);
+  }
+
+  toggleWishlist(product: Product, event: Event): void {
+    event.stopPropagation();
+    this.wishlistService.toggleWishlist(product);
+  }
+
+  isFavorite(productId?: string): boolean {
+    if (!productId) return false;
+    return this.wishlistService.isInWishlist(productId);
+  }
+
+  applyFilters(): void {
+    let products = [...this.allProducts];
+
     if (this.selectedCategory !== 'ALL') {
-      tempProducts = tempProducts.filter(
-        (p: any) => p.category && p.category.toUpperCase() === this.selectedCategory.toUpperCase()
+      products = products.filter((product) =>
+        product.category?.toUpperCase() === this.selectedCategory.toUpperCase()
       );
     }
 
-    // 2️⃣ ثانياً: الفلترة الذكية بكلمة البحث (بتدور في الـ title أو الـ name المرفوعين من الداشبورد)
-    if (this.searchTerm.trim() !== '') {
-      const searchLower = this.searchTerm.toLowerCase().trim();
-      tempProducts = tempProducts.filter((p: any) => {
-        const titleMatch = p.title && p.title.toLowerCase().includes(searchLower);
-        const nameMatch = p.name && p.name.toLowerCase().includes(searchLower);
-        return titleMatch || nameMatch;
+    const search = this.searchTerm.trim().toLowerCase();
+
+    if (search) {
+      products = products.filter((product) => {
+        const title = product.title?.toLowerCase() ?? '';
+        const name = product.name?.toLowerCase() ?? '';
+        const category = product.category?.toLowerCase() ?? '';
+        const description = product.description?.toLowerCase() ?? '';
+
+        return (
+          title.includes(search) ||
+          name.includes(search) ||
+          category.includes(search) ||
+          description.includes(search)
+        );
       });
     }
 
-    // ضخ النتيجة النهائية في القائمة اللي بيقرا منها الـ HTML
-    this.filteredProducts = tempProducts;
+    this.filteredProducts = products;
   }
 
-  /**
-   * ⚡ تشتغل فوراً لما العميل يضغط على الفئات (ALL - MEN - WOMEN - KIDS)
-   */
-  filterByCategory(event: any) {
-    this.selectedCategory = event.detail.value;
-    this.applyFilters(); // أعد تطبيق الفلترة والبحث معاً
+  onSearch(): void {
+    this.applyFilters();
   }
 
-  /**
-   * 🔍 تشتغل فوراً والعميل بيكتب حرف بحرف في شريط البحث
-   */
-  onSearch(event: any) {
-    this.searchTerm = event.detail.value || '';
-    this.applyFilters(); // أعد تطبيق الفلترة والبحث معاً
+  onCategoryChange(): void {
+    this.applyFilters();
   }
 
-  /**
-   * ✈️ الانتقال لصفحة تفاصيل المنتج بـ الـ ID
-   */
-  goToDetails(product: any) {
+  selectCategory(category: string): void {
+    this.selectedCategory = category;
+    this.applyFilters();
+
+    document.querySelector('.products-section')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
+  goToDetails(product: Product): void {
+    if (!product.id) return;
     this.navCtrl.navigateForward(`/product-details/${product.id}`);
   }
 
-  /**
-   * 🛒 ✈️ الانتقال لصفحة سلة المشتريات
-   */
-  goToCart() {
+  goToCart(): void {
     this.navCtrl.navigateForward('/cart');
   }
 
-  /**
-   * 🚀 تحسين أداء تكرار العناصر في الـ DOM
-   */
-  trackItems(index: number, item: any) {
-    return item.id;
+  goToWishlist(): void {
+    this.navCtrl.navigateForward('/wishlist');
+  }
+
+  goToProducts(): void {
+    this.selectedCategory = 'ALL';
+    this.searchTerm = '';
+    this.applyFilters();
+
+    setTimeout(() => {
+      document.querySelector('.products-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 50);
+  }
+
+  getProductName(product: Product): string {
+    return product.title || product.name || 'Product';
+  }
+
+  getProductImage(product: Product): string {
+    return product.imageUrl || product.image || 'assets/logo.png';
+  }
+
+  getProductCategory(product: Product): string {
+    return product.category || 'PRODUCT';
+  }
+
+  trackProduct(index: number, product: Product): string | number {
+    return product.id ?? index;
   }
 }

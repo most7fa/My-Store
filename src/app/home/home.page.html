@@ -1,142 +1,387 @@
 <ion-header class="ion-no-border">
-  <!-- التولبار العلوي مع فليكس بوكس مظبوط للاتجاه العربي (اليمين) -->
-  <ion-toolbar style="--background: #111827; color: #ffffff;">
-    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 8px; direction: rtl;">
 
-      <!-- 🛒 الجزء اليمين: زرار السلة يظهر في الأول على اليمين -->
-      <div style="margin-left: auto; margin-right: 4px;">
-        <ion-button (click)="goToCart()" fill="clear" style="position: relative; overflow: visible; --padding-start: 0; --padding-end: 0;">
-          <ion-icon name="bag-handle-outline" style="font-size: 28px; color: #ffffff;"></ion-icon>
-          <!-- العداد الأحمر -->
-          @if (cartCount > 0) {
-            <ion-badge color="danger"
-              style="position: absolute; top: -5px; right: -5px; font-size: 10px; padding: 4px 6px; border-radius: 50%; font-weight: bold; z-index: 999;">
-              {{ cartCount }}
-            </ion-badge>
-          }
-        </ion-button>
+  <!-- ================= HEADER ================= -->
+  <ion-toolbar class="main-toolbar">
+    <div class="header-container">
+
+      <div class="brand">
+        <img src="assets/logo.png" alt="ICON WEAR" class="brand-logo" />
+        <div class="brand-text">
+          <strong>ICON WEAR</strong>
+          <span>Premium Fashion</span>
+        </div>
       </div>
 
-      <!-- الجزء الشمال: اللوجو والعنوان يروحوا يسار -->
-      <div style="display: flex; align-items: center; margin-right: auto;">
-        <ion-title class="title-rtl" style="font-weight: 800; font-size: 20px; letter-spacing: 0.5px; color: #ffffff; padding: 0 8px 0 0;">
-          ICON WEAR
-        </ion-title>
-        <ion-thumbnail class="logo-thumb" style="--border-radius: 4px; width: 35px; height: 35px; margin-right: 4px;">
-          <img src="assets/logo.png" alt="Icon Wear Logo" />
-        </ion-thumbnail>
+      <div class="header-actions">
+
+        <p-button
+          icon="pi pi-search"
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          styleClass="header-icon"
+          (onClick)="scrollToSearch()"
+        />
+
+        <div class="cart-wrapper">
+          <p-button
+            icon="pi pi-heart"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+            styleClass="header-icon"
+            (onClick)="goToWishlist()"
+          />
+          @if (wishlistCount > 0) {
+            <p-badge
+              [value]="wishlistCount.toString()"
+              severity="danger"
+              class="cart-badge"
+            />
+          }
+        </div>
+
+        <div class="cart-wrapper">
+          <p-button
+            icon="pi pi-shopping-bag"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+            styleClass="header-icon"
+            (onClick)="goToCart()"
+          />
+          @if (cartCount > 0) {
+            <p-badge
+              [value]="cartCount.toString()"
+              severity="danger"
+              class="cart-badge"
+            />
+          }
+        </div>
+
       </div>
 
     </div>
   </ion-toolbar>
 
-  <!-- شريط البحث السريع والذكي -->
-  <ion-toolbar color="dark">
-    <ion-searchbar
-      placeholder="ابحث عن منتجك المفضل..."
-      animated="true"
-      debounce="300"
-      (ionInput)="onSearch($event)"
-      style="padding: 0 12px 8px 12px; --background: #1e293b; --color: white; --placeholder-color: #94a3b8; --icon-color: #94a3b8;">
-    </ion-searchbar>
-  </ion-toolbar>
-
-  <!-- فلاتر الأقسام التفاعلية -->
-  <ion-toolbar color="light">
-    <ion-segment
-      [value]="selectedCategory"
-      scrollable="true"
-      (ionChange)="filterByCategory($event)"
-      style="--background: transparent;">
-
-      <ion-segment-button value="ALL">
-        <ion-label style="font-weight: 700;">ALL</ion-label>
-      </ion-segment-button>
-
-      <ion-segment-button value="MEN">
-        <ion-label style="font-weight: 700;">MEN</ion-label>
-      </ion-segment-button>
-
-      <ion-segment-button value="WOMEN">
-        <ion-label style="font-weight: 700;">WOMEN</ion-label>
-      </ion-segment-button>
-
-      <ion-segment-button value="KIDS">
-        <ion-label style="font-weight: 700;">KIDS</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content style="--background: #f8fafc;">
-
-  <!-- إحصائية صغيرة مريحة للعين -->
-  <div class="results-count" style="padding: 12px 16px 0 16px; font-size: 13px; color: #64748b; font-weight: 600;">
-    إجمالي المنتجات المتاحة: {{ filteredProducts.length }}
+  <!-- ================= SEARCH ================= -->
+  <div class="search-section">
+    <div class="search-box">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+        placeholder="Search products, categories..."
+      />
+      @if (searchTerm) {
+        <button type="button" class="clear-button" (click)="searchTerm = ''; onSearch()">
+          <i class="pi pi-times"></i>
+        </button>
+      }
+    </div>
   </div>
 
-  <!-- 1. تأثير الهيكل العظمي (Skeleton Screen) أثناء التحميل -->
-  @if (isLoading) {
-    <ion-grid>
-      <ion-row>
-        @for (n of [1,2,3,4]; track n) {
-          <ion-col size="6" size-md="4">
-            <ion-card style="background: white; border-radius: 12px; box-shadow: none; border: 1px solid #e2e8f0; padding: 8px;">
-              <ion-skeleton-text animated style="width: 100%; height: 140px; border-radius: 8px;"></ion-skeleton-text>
-              <ion-card-header style="padding: 10px 0 5px 0;">
-                <ion-skeleton-text animated style="width: 40%; height: 12px;"></ion-skeleton-text>
-                <ion-skeleton-text animated style="width: 80%; height: 16px; margin-top: 6px;"></ion-skeleton-text>
-              </ion-card-header>
-              <ion-card-content style="padding: 0 0 5px 0;">
-                <ion-skeleton-text animated style="width: 30%; height: 14px;"></ion-skeleton-text>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        }
-      </ion-row>
-    </ion-grid>
-  }
+</ion-header>
 
-  <!-- 2. عرض المنتجات الفعلي بعد اكتمال التحميل -->
-  @if (!isLoading) {
-    <ion-grid>
-      <ion-row>
-        @for (p of filteredProducts; track trackItems($index, p)) {
-          <ion-col
-            size="6"
-            size-md="4"
-            size-lg="3"
-            >
-            <ion-card
-              button="true"
-              class="product-card-premium"
-              (click)="goToDetails(p)">
-              <div class="image-container">
-                <img [src]="p.imageUrl || p.image" [alt]="p.title || p.name">
-              </div>
-              <ion-card-header>
-                <span class="badge-cat">{{ p.category }}</span>
-                <ion-card-title class="product-title">
-                  {{ p.title || p.name }}
-                </ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                <div class="price-row">
-                  <span class="price-text">{{ p.price }} <small>EGP</small></span>
-                </div>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
+<ion-content class="store-content">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <span class="hero-small-title">NEW SEASON 2026</span>
+      <h1>Find Your <span>Perfect Style.</span></h1>
+      <p>Discover premium fashion pieces designed for your everyday lifestyle.</p>
+      <div class="hero-buttons">
+        <p-button label="Shop Now" icon="pi pi-arrow-right" iconPos="right" styleClass="shop-button" (onClick)="goToProducts()" />
+        <p-button label="Explore Collection" [text]="true" styleClass="explore-button" (onClick)="selectCategory('ALL')" />
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <div class="hero-circle"></div>
+      <div class="hero-card">
+        <i class="pi pi-shopping-bag"></i>
+        <span>ICON</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="page-container">
+
+    <!-- ================= CATEGORIES ================= -->
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <span class="section-label">SHOP BY</span>
+          <h2>Categories</h2>
+        </div>
+        <button class="text-button" type="button" (click)="selectCategory('ALL')">
+          View all <i class="pi pi-arrow-right"></i>
+        </button>
+      </div>
+
+      <div class="categories-grid">
+        @for (category of categoryButtons; track category.value) {
+          <button type="button" class="category-card" (click)="selectCategory(category.value)">
+            <div class="category-icon">
+              <i [class]="category.icon"></i>
+            </div>
+            <div class="category-info">
+              <strong>{{ category.name }}</strong>
+              <span>{{ category.description }}</span>
+            </div>
+            <i class="pi pi-arrow-up-right category-arrow"></i>
+          </button>
         }
-      </ion-row>
-      <!-- في حالة عدم وجود منتجات تطابق البحث أو الفلتر -->
-      @if (filteredProducts.length === 0) {
-        <div class="empty-state">
-          <ion-icon name="bag-outline"></ion-icon>
-          <p>لا توجد منتجات متاحة حالياً في هذا القسم</p>
+      </div>
+    </section>
+
+    <!-- ================= FEATURED ================= -->
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <span class="section-label">HAND PICKED</span>
+          <h2>Featured Products</h2>
+        </div>
+        <button class="text-button" type="button" (click)="goToProducts()">
+          See all <i class="pi pi-arrow-right"></i>
+        </button>
+      </div>
+
+      @if (isLoading) {
+        <div class="products-grid">
+          @for (item of [1,2,3,4]; track item) {
+            <div class="product-card">
+              <p-skeleton width="100%" height="220px" />
+              <div class="skeleton-content">
+                <p-skeleton width="35%" height="12px" />
+                <p-skeleton width="80%" height="18px" />
+                <p-skeleton width="45%" height="18px" />
+              </div>
+            </div>
+          }
         </div>
       }
-    </ion-grid>
-  }
+
+      @if (!isLoading) {
+        <div class="products-grid">
+          @for (product of featuredProducts; track trackProduct($index, product)) {
+            <article class="product-card" (click)="goToDetails(product)">
+              <div class="product-image">
+                <img [src]="getProductImage(product)" [alt]="getProductName(product)" />
+                <span class="product-tag">FEATURED</span>
+
+                <button
+                  type="button"
+                  class="favorite-button"
+                  [class.active]="isFavorite(product.id)"
+                  (click)="toggleWishlist(product, $event)"
+                >
+                  <i [class]="isFavorite(product.id) ? 'pi pi-heart-fill' : 'pi pi-heart'"></i>
+                </button>
+              </div>
+
+              <div class="product-details">
+                <span class="product-category">{{ getProductCategory(product) }}</span>
+                <h3>{{ getProductName(product) }}</h3>
+
+                <div class="product-bottom">
+                  <strong>{{ product.price }} <small>EGP</small></strong>
+                  <button type="button" class="arrow-button" (click)="addToCart(product, $event)">
+                    <i class="pi pi-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- ================= PROMO ================= -->
+    <section class="promo-section">
+      <div class="promo-content">
+        <span>ICON WEAR EXCLUSIVE</span>
+        <h2>Upgrade Your Everyday Look.</h2>
+        <p>Premium pieces. Better quality. Timeless style.</p>
+        <p-button label="Discover More" icon="pi pi-arrow-right" iconPos="right" styleClass="promo-button" (onClick)="goToProducts()" />
+      </div>
+      <div class="promo-shape">
+        <div class="promo-circle"></div>
+        <i class="pi pi-star-fill"></i>
+      </div>
+    </section>
+
+    <!-- ================= NEW ARRIVALS ================= -->
+    <section class="section-block products-section">
+      <div class="section-header">
+        <div>
+          <span class="section-label">JUST DROPPED</span>
+          <h2>New Arrivals</h2>
+        </div>
+        <button class="text-button" type="button" (click)="goToProducts()">
+          See all <i class="pi pi-arrow-right"></i>
+        </button>
+      </div>
+
+      @if (!isLoading) {
+        <div class="products-grid">
+          @for (product of newProducts; track trackProduct($index, product)) {
+            <article class="product-card" (click)="goToDetails(product)">
+              <div class="product-image">
+                <img [src]="getProductImage(product)" [alt]="getProductName(product)" />
+                <span class="product-tag new">NEW</span>
+
+                <button
+                  type="button"
+                  class="favorite-button"
+                  [class.active]="isFavorite(product.id)"
+                  (click)="toggleWishlist(product, $event)"
+                >
+                  <i [class]="isFavorite(product.id) ? 'pi pi-heart-fill' : 'pi pi-heart'"></i>
+                </button>
+              </div>
+
+              <div class="product-details">
+                <span class="product-category">{{ getProductCategory(product) }}</span>
+                <h3>{{ getProductName(product) }}</h3>
+
+                <div class="product-bottom">
+                  <strong>{{ product.price }} <small>EGP</small></strong>
+                  <button type="button" class="arrow-button" (click)="addToCart(product, $event)">
+                    <i class="pi pi-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- ================= SEARCH RESULTS ================= -->
+    @if (searchTerm || selectedCategory !== 'ALL') {
+      <section class="section-block products-section">
+        <div class="section-header">
+          <div>
+            <span class="section-label">SEARCH RESULTS</span>
+            <h2>Products</h2>
+            <p class="results-count">{{ filteredProducts.length }} products found</p>
+          </div>
+          <p-button
+            label="Clear"
+            icon="pi pi-times"
+            [text]="true"
+            severity="secondary"
+            (onClick)="searchTerm = ''; selectedCategory = 'ALL'; applyFilters()"
+          />
+        </div>
+
+        @if (filteredProducts.length > 0) {
+          <div class="products-grid">
+            @for (product of filteredProducts; track trackProduct($index, product)) {
+              <article class="product-card" (click)="goToDetails(product)">
+                <div class="product-image">
+                  <img [src]="getProductImage(product)" [alt]="getProductName(product)" />
+                  <button
+                    type="button"
+                    class="favorite-button"
+                    [class.active]="isFavorite(product.id)"
+                    (click)="toggleWishlist(product, $event)"
+                  >
+                    <i [class]="isFavorite(product.id) ? 'pi pi-heart-fill' : 'pi pi-heart'"></i>
+                  </button>
+                </div>
+
+                <div class="product-details">
+                  <span class="product-category">{{ getProductCategory(product) }}</span>
+                  <h3>{{ getProductName(product) }}</h3>
+
+                  <div class="product-bottom">
+                    <strong>{{ product.price }} <small>EGP</small></strong>
+                    <button type="button" class="arrow-button" (click)="addToCart(product, $event)">
+                      <i class="pi pi-plus"></i>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        }
+
+        @if (filteredProducts.length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon"><i class="pi pi-search"></i></div>
+            <h3>No products found</h3>
+            <p>Try another search or category.</p>
+            <p-button
+              label="Clear Filters"
+              icon="pi pi-refresh"
+              [outlined]="true"
+              severity="secondary"
+              (onClick)="searchTerm = ''; selectedCategory = 'ALL'; applyFilters()"
+            />
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ================= TRUST ================= -->
+    <section class="trust-section">
+      <div class="trust-item">
+        <div class="trust-icon"><i class="pi pi-truck"></i></div>
+        <div>
+          <strong>Fast Delivery</strong>
+          <span>Quick delivery to your door</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><i class="pi pi-shield"></i></div>
+        <div>
+          <strong>Secure Payment</strong>
+          <span>Safe & secure checkout</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><i class="pi pi-refresh"></i></div>
+        <div>
+          <strong>Easy Returns</strong>
+          <span>Simple return policy</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><i class="pi pi-headphones"></i></div>
+        <div>
+          <strong>Support</strong>
+          <span>We're here for you</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= MOBILE NAV ================= -->
+  <div class="mobile-bottom-nav">
+    <button type="button" class="active">
+      <i class="pi pi-home"></i>
+      <span>Home</span>
+    </button>
+    <button type="button" (click)="goToProducts()">
+      <i class="pi pi-th-large"></i>
+      <span>Shop</span>
+    </button>
+    <button type="button" (click)="goToCart()">
+      <div class="bottom-cart">
+        <i class="pi pi-shopping-bag"></i>
+        @if (cartCount > 0) { <span>{{ cartCount }}</span> }
+      </div>
+      <span>Cart</span>
+    </button>
+    <button type="button" (click)="goToWishlist()">
+      <i class="pi pi-heart"></i>
+      <span>Wishlist</span>
+    </button>
+  </div>
 
 </ion-content>

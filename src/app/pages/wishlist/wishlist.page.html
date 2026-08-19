@@ -1,0 +1,54 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="main-toolbar">
+    <div class="header-container">
+      <button class="icon-btn" (click)="goBack()">
+        <i class="pi pi-arrow-left"></i>
+      </button>
+      <h2>Wishlist</h2>
+      <div style="width: 40px;"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="wishlist-content">
+  <div class="page-container">
+
+    @if (wishlistItems.length > 0) {
+      <div class="products-grid">
+        @for (product of wishlistItems; track product.id) {
+          <article class="product-card" (click)="goToDetails(product)">
+            <div class="product-image">
+              <img [src]="product.imageUrl || product.image || 'assets/logo.png'" [alt]="product.title" />
+              
+              <button type="button" class="favorite-button active" (click)="$event.stopPropagation(); removeFromWishlist(product.id)">
+                <i class="pi pi-heart-fill"></i>
+              </button>
+            </div>
+
+            <div class="product-details">
+              <span class="product-category">{{ product.category }}</span>
+              <h3>{{ product.title || product.name }}</h3>
+
+              <div class="product-bottom">
+                <strong>{{ product.price }} <small>EGP</small></strong>
+                <button type="button" class="add-cart-btn" (click)="$event.stopPropagation(); addToCart(product)">
+                  <i class="pi pi-shopping-bag"></i> Add
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+    @if (wishlistItems.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon"><i class="pi pi-heart"></i></div>
+        <h3>Your Wishlist is Empty</h3>
+        <p>Save items you love to find them easily later.</p>
+        <button class="shop-btn" (click)="goToShop()">Explore Products</button>
+      </div>
+    }
+
+  </div>
+</ion-content>

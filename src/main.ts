@@ -1,5 +1,6 @@
-import { provideZoneChangeDetection } from "@angular/core";
+import { provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
+
 import {
   RouteReuseStrategy,
   provideRouter,
@@ -7,20 +8,28 @@ import {
   PreloadAllModules
 } from '@angular/router';
 
-import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
-import { provideHttpClient, withXhr } from '@angular/common/http';
+import {
+  IonicRouteStrategy,
+  provideIonicAngular
+} from '@ionic/angular/standalone';
 
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import {
+  provideHttpClient,
+  withXhr
+} from '@angular/common/http';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app';
-
-import { environment } from './environments/environment';
+import { appConfig } from './app/app.config';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZoneChangeDetection(),{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideZoneChangeDetection(),
+
+    {
+      provide: RouteReuseStrategy,
+      useClass: IonicRouteStrategy
+    },
 
     provideIonicAngular(),
 
@@ -31,12 +40,6 @@ bootstrapApplication(AppComponent, {
 
     provideHttpClient(withXhr()),
 
-    provideFirebaseApp(() =>
-      initializeApp(environment.firebaseConfig)
-    ),
-
-    provideFirestore(() =>
-      getFirestore()
-    )
+    ...appConfig.providers
   ]
 });
