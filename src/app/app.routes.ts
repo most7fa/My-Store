@@ -21,5 +21,9 @@ export const routes: Routes = [
   {
     path: 'wishlist',
     loadComponent: () => import('./pages/wishlist/wishlist.page').then(m => m.WishlistPage)
-  }
+  },
+  {
+    path: 'product-details/:id', // لاحظ إضافة ':id' هنا
+    loadComponent: () => import('./pages/product-details/product-details.page').then(m => m.ProductDetailsPage)
+  },
 ];

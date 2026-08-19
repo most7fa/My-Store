@@ -162,6 +162,20 @@ export class HomePage implements OnInit {
     this.filteredProducts = products;
   }
 
+  // دالة زر See All لإظهار جميع المنتجات والتمرير لأسفل
+  seeAll(): void {
+    this.selectedCategory = 'ALL';
+    this.searchTerm = '';
+    this.applyFilters();
+
+    setTimeout(() => {
+      this.document.querySelector('.products-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 50);
+  }
+
   onSearch(): void {
     this.applyFilters();
   }
@@ -174,7 +188,7 @@ export class HomePage implements OnInit {
     this.selectedCategory = category;
     this.applyFilters();
 
-    document.querySelector('.products-section')?.scrollIntoView({
+    this.document.querySelector('.products-section')?.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
     });
@@ -194,16 +208,7 @@ export class HomePage implements OnInit {
   }
 
   goToProducts(): void {
-    this.selectedCategory = 'ALL';
-    this.searchTerm = '';
-    this.applyFilters();
-
-    setTimeout(() => {
-      document.querySelector('.products-section')?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }, 50);
+    this.seeAll();
   }
 
   getProductName(product: Product): string {

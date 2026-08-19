@@ -149,6 +149,31 @@
         </button>
       </div>
 
+      <section class="products-section">
+  <div class="products-grid">
+    @for (product of filteredProducts; track trackProduct($index, product)) {
+      <article class="product-card" (click)="goToDetails(product)">
+        <div class="product-image">
+          <img [src]="getProductImage(product)" [alt]="getProductName(product)" />
+          <button type="button" class="favorite-button" (click)="toggleWishlist(product, $event)">
+            <i [class]="isFavorite(product.id) ? 'pi pi-heart-fill' : 'pi pi-heart'"></i>
+          </button>
+        </div>
+        <div class="product-details">
+          <span class="product-category">{{ getProductCategory(product) }}</span>
+          <h3>{{ getProductName(product) }}</h3>
+          <div class="product-bottom">
+            <strong>{{ product.price }} <small>EGP</small></strong>
+            <button class="arrow-button" type="button" (click)="addToCart(product, $event)">
+              <i class="pi pi-plus"></i>
+            </button>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+</section>
+
       @if (isLoading) {
         <div class="products-grid">
           @for (item of [1,2,3,4]; track item) {

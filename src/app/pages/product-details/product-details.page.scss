@@ -1,205 +1,212 @@
-// حاوي الصفحة بالكامل
-.product-container {
-  display: flex;
-  flex-direction: column;
-  background-color: #f8fafc;
-  min-height: 100%;
+.details-content {
+  --background: #ffffff;
 }
 
-// تظبيط عرض الصورة بشكل براند شيك
-.image-wrapper {
-  width: 100%;
-  height: 35vh; // بتاخد 35% من طول الشاشة
-  background: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
+.main-toolbar {
+  --background: #ffffff;
+  padding: 8px 16px;
+  border-bottom: 1px solid #e4e4e7;
 
-  img {
-    max-height: 100%;
-    width: 100%;
-    object-fit: cover; // بتملى المساحة بدون تشويه أو حواف بيضاء ضخمة
-    border-radius: 0 0 20px 20px;
-  }
-}
-
-// صندوق التفاصيل السفلي (Style شبه كروت الشغل الاحترافي)
-.details-box {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 24px 24px 0 0;
-  margin-top: -20px; // تداخل بسيط فوق الصورة بيدي مظهر عمق (Depth)
-  box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.03);
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-
-  // شارة القسم (MEN - WOMEN)
-  .category-badge {
-    align-self: flex-start;
-    background: #f1f5f9;
-    color: #64748b;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-  }
-
-  // اسم المنتج
-  .product-title {
-    font-size: 22px;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0 0 10px 0;
-    line-height: 1.4;
-  }
-
-  // سطر السعر والحالة
-  .price-row {
+  .header-container {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
 
-    .product-price {
-      font-size: 20px;
+    h2 { font-size: 1.1rem; font-weight: 800; margin: 0; color: #18181b; }
+  }
+}
+
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: #f4f4f5;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+
+  i { font-size: 1.1rem; color: #18181b; }
+  i.active { color: #ef4444; }
+}
+
+.page-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.image-gallery {
+  flex: 1;
+
+  .main-image {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #f4f4f5;
+    aspect-ratio: 4/5;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+}
+
+.details-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .category-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #2563eb;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #18181b;
+    margin: 4px 0 12px;
+  }
+
+  .price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #18181b;
+  }
+
+  .description {
+    color: #71717a;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin: 16px 0 24px;
+  }
+
+  .option-block {
+    margin-bottom: 20px;
+
+    label { font-size: 0.85rem; color: #71717a; display: block; margin-bottom: 10px; }
+
+    .color-options {
+      display: flex; gap: 12px;
+
+      .color-circle {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: transform 0.2s;
+
+        &.active { border-color: #18181b; transform: scale(1.15); }
+      }
+    }
+
+    .size-options {
+      display: flex; gap: 10px;
+
+      .size-btn {
+        width: 44px; height: 44px;
+        border-radius: 10px;
+        border: 1px solid #e4e4e7;
+        background: #ffffff;
+        font-weight: 700;
+        cursor: pointer;
+
+        &.active {
+          background: #18181b;
+          color: #ffffff;
+          border-color: #18181b;
+        }
+      }
+    }
+  }
+
+  .purchase-bar {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      background: #f4f4f5;
+      border-radius: 12px;
+      padding: 4px;
+
+      button {
+        width: 36px; height: 36px;
+        border-radius: 8px;
+        border: none; background: #ffffff;
+        font-weight: 800; cursor: pointer;
+      }
+
+      span { padding: 0 12px; font-weight: 800; }
+    }
+
+    .add-to-cart-btn {
+      flex: 1;
+      background: #18181b;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
       font-weight: 800;
-      color: #22c55e; // لون أخضر مريح للعين مش فاقع
-    }
-
-    .stock-status {
-      font-size: 12px;
-      color: #10b981;
-      background: #ecfdf5;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
   }
 
-  .divider {
-    border: 0;
-    height: 1px;
-    background: #f1f5f9;
-    margin: 15px 0;
-  }
-
-  h3 {
-    font-size: 16px;
-    font-weight: 700;
-    color: #334155;
-    margin: 0 0 8px 0;
-  }
-
-  // الوصف
-  .product-description {
-    font-size: 14px;
-    color: #64748b;
-    line-height: 1.6;
-    margin: 0 0 30px 0;
-  }
-
-  // زرار الإضافة للسلة الأسود المودرن
-  .add-to-cart-btn {
-    margin-top: auto; // بيخليه ينزل دايماً في آخر المساحة المتاحة تحت
-    --background: #0f172a; // لون براندات غامق وشيك جداً
-    --box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
-    font-weight: 700;
-    font-size: 16px;
-    height: 50px;
+  /* إصلاح ألوان النص في أزرار المقاسات والكمية */
+.option-block .size-options .size-btn {
+  color: #18181b !important;
+  font-weight: 700;
+  
+  &.active {
+    color: #ffffff !important;
+    background: #18181b !important;
   }
 }
 
-// التنسيقات السابقة نتركها كما هي، ونضيف أسفلها التالي:
+.purchase-bar .quantity-controls {
+  background: #f4f4f5;
+  border: 1px solid #e4e4e7;
 
-.selector-section {
-  h3 {
-    font-size: 14px;
-    font-weight: 700;
-    color: #475569;
-    margin-bottom: 10px;
+  button {
+    color: #18181b !important;
+    font-weight: 800;
+  }
+
+  span {
+    color: #18181b !important;
+    font-weight: 800;
   }
 }
 
-// شبكة الألوان التفاعلية
-.colors-grid {
+/* إصلاح ارتفاع الصورة وعدم التمدد */
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.loading-container {
   display: flex;
-  gap: 12px;
-
-  .color-circle {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-
-    ion-icon {
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    
-    // التعديل لو اللون المختار أبيض أو فاتح عشان علامة الصح تبان
-    &[style*="background-color: #ffffff"] ion-icon {
-      color: #000;
-    }
-  }
-
-  // تأثير تحديد اللون (Border أسود فخم حول الدائرة النشطة)
-.color-circle.active-color {
-  border-color: #111827 !important;
-  transform: scale(1.1);
-}
-
-// تأثير تحديد المقاس (خلفية سوداء وخط أبيض للمقاس النشط)
-.size-box.active-size {
-  background-color: #111827 !important;
-  color: #ffffff !important;
-  border-color: #111827 !important;
-}
-
-  // شكل الدائرة النشطة المحددة
-  .active-color {
-    transform: scale(1.15);
-    border-color: #cbd5e1;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  
+  ion-spinner {
+    width: 45px;
+    height: 45px;
+    --color: #18181b;
   }
 }
-
-// شبكة المقاسات التفاعلية
-.sizes-grid {
-  display: flex;
-  gap: 10px;
-
-  .size-box {
-    min-width: 42px;
-    height: 38px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: #334155;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  // شكل مربع المقاس النشط المحدد
-  .active-size {
-    background: #0f172a; // نفس لون البراند الغامق
-    color: #ffffff;
-    border-color: #0f172a;
-    box-shadow: 0 4px 8px rgba(15, 23, 42, 0.15);
-  }
 }

@@ -1,94 +1,105 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-
-import { IonicModule, ToastController, NavController } from '@ionic/angular'; // 🌟 ضفنا NavController عشان دالة الرجوع
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, NavController, ToastController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { CartService } from '../../services/cart.service'; 
-import { addIcons } from 'ionicons'; // 🌟 استيراد دالة تسجيل الأيقونات
-import { cartOutline, arrowBackOutline, checkmarkOutline } from 'ionicons/icons'; // 🌟 استيراد الأيقونات اللي هتحتاجها في الـ HTML
+
+import { Product, ProductService } from '../../services/product';
+import { CartService } from '../../services/cart.service';
+import { WishlistService } from '../../services/wishlist.service';
 
 @Component({
-    selector: 'app-product-details',
-    templateUrl: './product-details.page.html',
-    styleUrls: ['./product-details.page.scss'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [IonicModule]
+  selector: 'app-product-details',
+  templateUrl: './product-details.page.html',
+  styleUrls: ['./product-details.page.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, IonicModule]
 })
 export class ProductDetailsPage implements OnInit {
-
   private route = inject(ActivatedRoute);
-  private firestore = inject(Firestore);
-  private cartService = inject(CartService); 
+  private navCtrl = inject(NavController);
   private toastCtrl = inject(ToastController);
-  private navCtrl = inject(NavController); // 🌟 حقن الـ NavController للرجوع للخلف
-  private cdr = inject(ChangeDetectorRef);
+  private productService = inject(ProductService);
+  private cartService = inject(CartService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+  public wishlistService = inject(WishlistService);
 
-  product: any = null;
-  
-  // 🌟 مصفوفات افتراضية للمقاسات والألوان عشان الأبلكيشن يبقى واقعي
-  availableSizes: string[] = ['S', 'M', 'L', 'XL', 'XXL'];
-  availableColors: string[] = ['#0f172a', '#dc2626', '#2563eb', '#16a34a', '#d97706']; // أكواد ألوان شيك (أسود، أحمر، أزرق، أخضر، برتقالي)
+  product: Product | null = null;
+  selectedImage = '';
+  selectedSize = 'M';
+  selectedColor = 'Black';
+  quantity = 1;
+  isLoading = true;
 
-  // 🌟 المتغيرات اللي هتخزن اختيار الزبون (بشكل افتراضي واقفين على أول اختيار)
-  selectedSize: string = 'M';
-  selectedColor: string = '#0f172a';
+  availableSizes: string[] = ['S', 'M', 'L', 'XL'];
+  availableColors = [
+    { name: 'Black', hex: '#18181b' },
+    { name: 'Navy', hex: '#1e3a8a' },
+    { name: 'Beige', hex: '#d4b996' }
+  ];
 
-  constructor() {
-    // 🌟 تسجيل الأيقونات هنا عشان تظهر جوه الـ HTML وم تضربش
-    addIcons({ cartOutline, arrowBackOutline, checkmarkOutline });
-  }
+  ngOnInit(): void {
+    const productId = this.route.snapshot.paramMap.get('id');
 
-  ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadProductDetails(id);
+    if (!productId) {
+      this.isLoading = false;
+      return;
     }
-  }
 
-  async loadProductDetails(id: string) {
-    try {
-      const docRef = doc(this.firestore, `products/${id}`);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        this.product = { id: docSnap.id, ...docSnap.data() };
-        this.cdr.detectChanges();
+    this.productService.getProductById(productId).subscribe({
+      next: (product) => {
+        this.product = product;
+        this.selectedImage = product?.imageUrl || product?.image || 'assets/suit.jpg';
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (error: unknown) => {
+        console.error('Error fetching product:', error);
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
       }
-    } catch (error) {
-      console.error('Error loading product details:', error);
+    });
+  }
+
+  increaseQty(): void {
+    this.quantity++;
+  }
+
+  decreaseQty(): void {
+    if (this.quantity > 1) {
+      this.quantity--;
     }
   }
 
-  // 🌟 دالة اختيار المقاس
-  selectSize(size: string) {
-    this.selectedSize = size;
+  toggleWishlist(): void {
+    if (this.product) {
+      this.wishlistService.toggleWishlist(this.product);
+    }
   }
 
-  // 🌟 دالة اختيار اللون
-  selectColor(color: string) {
-    this.selectedColor = color;
-  }
+  async addToCart(): Promise<void> {
+    if (!this.product) {
+      return;
+    }
 
-  // 🌟 دالة الرجوع للصفحة السابقة
-  goBack() {
-    this.navCtrl.back();
-  }
-
-  // 🌟 الدالة الاحترافية اللي بتشتغل لما يدوس "إضافة إلى السلة"
-  async addToCart() {
-    if (!this.product) return;
-
-    // بنبعت المنتج مع المقاس واللون المختارين للسيرفس
-    this.cartService.addToCart(this.product, this.selectedSize, this.selectedColor);
-
-    // بنظهر رسالة توست سريعة وشيك للزبون تأكد الإضافة
-    const toast = await this.toastCtrl.create({
-      message: '🛒 تم إضافة المنتج إلى السلة بنجاح!',
-      duration: 1500,
-      position: 'bottom',
-      color: 'dark',
-      cssClass: 'custom-toast'
+    this.cartService.addToCart({
+      ...this.product,
+      selectedSize: this.selectedSize,
+      selectedColor: this.selectedColor,
+      quantity: this.quantity
     });
+
+    const toast = await this.toastCtrl.create({
+      message: 'Added to cart successfully!',
+      duration: 2000,
+      color: 'dark',
+      position: 'bottom'
+    });
+
     await toast.present();
+  }
+
+  goBack(): void {
+    this.navCtrl.back();
   }
 }
